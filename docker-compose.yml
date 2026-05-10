@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db-erp:
+    image: postgres:16
+    container_name: postgres-erp
+    restart: always
+    environment:
+      # Cria o usuário automaticamente
+      POSTGRES_USER: erpuser
+      # Define a senha automaticamente
+      POSTGRES_PASSWORD: erp3232
+      # Cria o banco de dados automaticamente
+      POSTGRES_DB: postgresERP_db
+      # Força o uso do padrão moderno e seguro (SCRAM-SHA-256)
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_erp:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-erp
+    restart: always
+    environment:
+      # Credenciais para você logar na TELA do pgAdmin (pode ser qualquer uma)
+      PGADMIN_DEFAULT_EMAIL: isac@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80" # Acessaremos via localhost:5050 para não conflitar com o Spring (8080)
+    depends_on:
+      - db-erp
+
+volumes:
+  pgdata_erp:
