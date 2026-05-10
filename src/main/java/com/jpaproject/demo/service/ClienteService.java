@@ -33,7 +33,7 @@ public class ClienteService implements IClienteService{
     }
 
     @Override
-    public void editar(String cpf, Cliente clienteEditado) {
+    public Cliente editar(String cpf, Cliente clienteEditado) {
         Optional<Cliente> cliente = repository.findByCpf(cpf);
         Cliente clienteBuscado = cliente.orElse(null);
 
@@ -43,8 +43,9 @@ public class ClienteService implements IClienteService{
             clienteBuscado.setLastName(clienteEditado.getLastName());
             clienteBuscado.setEmail(clienteEditado.getEmail());
 
-            salvar(clienteBuscado);
+            return salvar(clienteBuscado);
         }
+        return null;
     }
 
     @Override

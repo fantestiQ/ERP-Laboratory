@@ -12,7 +12,7 @@ public interface IClienteService {
 
     void remover(String cpf);
 
-    void editar(String cpf, Cliente clienteEditado);
+    Cliente editar(String cpf, Cliente clienteEditado);
 
     List<Cliente> listarTodos();
 }
