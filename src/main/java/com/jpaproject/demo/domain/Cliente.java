@@ -34,7 +34,7 @@ public class Cliente {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "cliente")
@@ -42,7 +42,11 @@ public class Cliente {
 
     private BigDecimal saldo;
 
-    public Cliente(String email, String nome, String lastName,String cpf) {
+    public void setSaldo(String saldo) {
+        this.saldo = new BigDecimal(saldo);
+    }
+
+    public Cliente(String email, String nome, String lastName, String cpf) {
         this.email = email;
         this.primeiroNome = nome;
         this.cpf = cpf;

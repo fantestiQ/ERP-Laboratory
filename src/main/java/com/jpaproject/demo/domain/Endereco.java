@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
@@ -27,4 +29,38 @@ public class Endereco {
 
     @ManyToOne
     private Cliente cliente;
+
+    public Endereco(String endereco, String cep, String cidade, Integer numero, String uf, Cliente cliente) {
+        this.endereco = endereco;
+        this.cep = cep;
+        this.cidade = cidade;
+        this.numero = numero;
+        this.uf = uf;
+        this.cliente = cliente;
+    }
+
+    @Override
+    public String toString() {
+        return "Endereco{" +
+                "id=" + id +
+                ", endereco='" + endereco + '\'' +
+                ", cep='" + cep + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", numero=" + numero +
+                ", uf='" + uf + '\'' +
+                ", cliente=" + cliente +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Endereco endereco1 = (Endereco) o;
+        return Objects.equals(id, endereco1.id) && Objects.equals(endereco, endereco1.endereco) && Objects.equals(cliente, endereco1.cliente);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, endereco, cliente);
+    }
 }

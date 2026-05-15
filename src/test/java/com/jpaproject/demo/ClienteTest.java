@@ -1,6 +1,7 @@
 package com.jpaproject.demo;
 
 import com.jpaproject.demo.domain.Cliente;
+import com.jpaproject.demo.domain.Endereco;
 import com.jpaproject.demo.service.IClienteService;
 
 import org.junit.jupiter.api.AfterEach;
@@ -10,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @SpringBootTest
@@ -85,6 +88,30 @@ public class ClienteTest {
         Assertions.assertTrue(clienteList.containsAll(insertList));
 
     }
+
+    @Test
+    public void devePersistirClienteEEndereco(){
+        Endereco endereco = new Endereco("Rua das Elevações","0211890", "São Paulo",321,"SP",cliente);
+        List<Endereco> enderecos = new ArrayList<>();
+        enderecos.add(endereco);
+        cliente.setEnderecos(enderecos);
+
+        Cliente cliTest = clienteService.salvar(cliente);
+        assertNotNull(cliTest.getEnderecos());
+
+    }
+
+    @Test
+    public void deveAdicionarSaldoAoCliente(){
+        Cliente c = clienteService.buscarPorCpf(cliente.getCpf());
+        c.setSaldo("30");
+        assertEquals(BigDecimal.valueOf(30),
+                c.getSaldo());
+       Cliente cliTest = clienteService.salvar(c);
+       assertEquals(cliTest.getSaldo(), c.getSaldo());
+    }
+
+
 
     @BeforeEach
     public void init(){
