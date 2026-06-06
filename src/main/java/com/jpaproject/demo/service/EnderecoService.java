@@ -21,7 +21,9 @@ public class EnderecoService implements IEnderecoService{
 
     @Override
     public Endereco editarEndereco(String nomeEndereco, String cpfCliente, Endereco enderecoEditado) {
-        return null;
+        Endereco endereco = buscarEndereco(nomeEndereco, cpfCliente);
+        endereco.editaEndereco(enderecoEditado);
+        return  repository.save(endereco);
     }
 
     @Override
@@ -62,4 +64,6 @@ public class EnderecoService implements IEnderecoService{
         }
         return null;
     }
+
+
 }

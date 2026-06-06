@@ -39,6 +39,14 @@ public class Endereco {
         this.cliente = cliente;
     }
 
+    public void editaEndereco(Endereco enderecoEditado){
+        this.setEndereco(enderecoEditado.getEndereco());
+        this.setUf(enderecoEditado.getUf());
+        this.setCep(enderecoEditado.getCep());
+        this.setCidade(enderecoEditado.getCidade());
+        this.setNumero(enderecoEditado.getNumero());
+    }
+
     @Override
     public String toString() {
         return "Endereco{" +

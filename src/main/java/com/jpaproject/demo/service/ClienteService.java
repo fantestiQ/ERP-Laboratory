@@ -36,13 +36,8 @@ public class ClienteService implements IClienteService{
     public Cliente editar(String cpf, Cliente clienteEditado) {
         Optional<Cliente> cliente = repository.findByCpf(cpf);
         Cliente clienteBuscado = cliente.orElse(null);
-
         if (clienteBuscado != null){
-            clienteBuscado.setCpf(clienteEditado.getCpf());
-            clienteBuscado.setPrimeiroNome(clienteEditado.getPrimeiroNome());
-            clienteBuscado.setLastName(clienteEditado.getLastName());
-            clienteBuscado.setEmail(clienteEditado.getEmail());
-
+            clienteBuscado.editaCliente(clienteEditado);
             return salvar(clienteBuscado);
         }
         return null;

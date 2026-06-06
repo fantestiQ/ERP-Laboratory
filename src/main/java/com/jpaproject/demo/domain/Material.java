@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
@@ -22,5 +24,21 @@ public class Material {
    private Produto produto;
 
    private Integer quantidade;
+
+   public Material(Produto produto) {
+      this.produto = produto;
+      this.quantidade = 0;
+   }
+
+   public static  Material fromProduto(Produto produto){
+      return new Material(produto);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (o == null || getClass() != o.getClass()) return false;
+      Material material = (Material) o;
+      return Objects.equals(produto, material.produto);
+   }
 
 }

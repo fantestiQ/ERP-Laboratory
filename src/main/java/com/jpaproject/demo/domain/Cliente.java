@@ -54,6 +54,13 @@ public class Cliente {
         this.saldo = BigDecimal.ZERO;
     }
 
+    public void editaCliente(Cliente clienteEditado){
+        this.setCpf(clienteEditado.getCpf());
+        this.setPrimeiroNome(clienteEditado.getPrimeiroNome());
+        this.setLastName(clienteEditado.getLastName());
+        this.setEmail(clienteEditado.getEmail());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

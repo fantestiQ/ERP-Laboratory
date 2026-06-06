@@ -2,6 +2,7 @@ package com.jpaproject.demo;
 
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Endereco;
+import com.jpaproject.demo.repository.EnderecoRepository;
 import com.jpaproject.demo.service.IClienteService;
 import com.jpaproject.demo.service.IEnderecoService;
 import org.junit.jupiter.api.*;
@@ -25,7 +26,12 @@ public class EnderecoTest {
 
     @Test
     public void deveEditarEnderecoCliente(){
+        Endereco endereco = enderecoService.buscarEndereco("Rua das Elevações", cliente.getCpf());
+        endereco.setEndereco("Avenida Bringel");
+        endereco.setCidade("Meu coração");
 
+       Endereco enderecoEditado = enderecoService.editarEndereco("Rua das Elevações", cliente.getCpf(),endereco);
+       Assertions.assertEquals(endereco, enderecoEditado);
     }
 
     @Test
@@ -46,13 +52,13 @@ public class EnderecoTest {
     @Test
     public void deveBuscarEnderecoCliente(){
       Endereco endereco =  enderecoService.buscarEndereco("Rua das Elevações", cliente.getCpf());
-        System.out.println(endereco);
+        Assertions.assertEquals(cliente.getEnderecos().get(0),endereco);
     }
 
     @Test
     public void deveBuscarTodosEnderecosCliente(){
         List<Endereco> enderecos = enderecoService.listaTodosEnderecos(cliente.getCpf());
-        enderecos.forEach(System.out::println);
+        Assertions.assertArrayEquals(cliente.getEnderecos().toArray(),enderecos.toArray());
     }
 
 
@@ -67,7 +73,6 @@ public class EnderecoTest {
 
         Endereco primeiroEndereco = new Endereco("Rua das Elevações","0211890", "São Paulo",321,"SP",cliente);
         Endereco segundoEndereco = new Endereco("Avenida Stars","0211780", "Rio de Janeiro",3211,"RJ",cliente);
-
 
         List<Endereco> enderecos = new ArrayList<>();
         enderecos.add(primeiroEndereco);
