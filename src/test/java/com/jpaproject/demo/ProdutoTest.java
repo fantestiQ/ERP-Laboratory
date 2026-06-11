@@ -1,9 +1,8 @@
 package com.jpaproject.demo;
 
-import com.jpaproject.demo.domain.Material;
+
 import com.jpaproject.demo.domain.Produto;
 import com.jpaproject.demo.service.IProdutoService;
-import com.jpaproject.demo.service.ProdutoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.sound.sampled.Port;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -57,11 +56,18 @@ public class ProdutoTest {
     }
 
     @Test
-    public void deveexcluirProduto(){
+    public void deveExcluirProduto(){
         produtoService.excluir(1L);
         Produto produtoExcluido = produtoService.buscarPorCod(1L);
 
         Assertions.assertNull(produtoExcluido);
+    }
+
+    @Test
+    public void deveAdicionarQuantidadeProdutoMaterial(){
+        produtoService.addQuantidadeMaterial(10,1L);
+        produto = produtoService.buscarPorCod(1L);
+        Assertions.assertEquals(10,produto.getMaterial().getQuantidade());
     }
 
     @BeforeEach

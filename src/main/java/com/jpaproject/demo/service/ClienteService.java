@@ -2,6 +2,7 @@ package com.jpaproject.demo.service;
 
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.repository.ClienteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ClienteService implements IClienteService{
 
-    @Autowired
-    ClienteRepository repository;
+
+    public final ClienteRepository repository;
 
     @Override
     public Cliente salvar(Cliente cliente) {

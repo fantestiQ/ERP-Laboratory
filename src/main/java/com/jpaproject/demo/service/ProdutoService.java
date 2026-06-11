@@ -6,15 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProdutoService implements IProdutoService{
 
-    @Autowired
-    ProdutoRepository repository;
+
+    public final ProdutoRepository repository;
 
     @Override
     public Produto cadastrar(Produto produto) {
@@ -42,6 +42,13 @@ public class ProdutoService implements IProdutoService{
     public void excluir(Long cod) {
         Produto produto = repository.findByCodigo(cod);
         repository.delete(produto);
+    }
+
+    @Override
+    public void addQuantidadeMaterial(Integer quantidade, Long cod) {
+        Produto produto = buscarPorCod(cod);
+        produto.getMaterial().incrementaQuantidade(quantidade);
+        repository.save(produto);
     }
 
 

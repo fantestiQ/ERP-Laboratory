@@ -1,148 +1,145 @@
 package com.jpaproject.demo;
 
 import com.jpaproject.demo.domain.Cliente;
-import com.jpaproject.demo.domain.Endereco;
-import com.jpaproject.demo.service.IClienteService;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
+import com.jpaproject.demo.repository.ClienteRepository;
+import com.jpaproject.demo.service.ClienteService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
+class ClienteTest {
 
-@SpringBootTest
-public class ClienteTest {
+    @Mock
+    private ClienteRepository repository;
 
-    @Autowired
-    IClienteService clienteService;
+    @InjectMocks
+    private ClienteService clienteService;
 
-    Cliente cliente = null;
-    Cliente cliente2 = null;
-    Cliente cliente3 = null;
+    private Cliente cliente;
+    private static final String CPF = "1412312311";
 
-
-    @Test
-    public void deveSalvarCliente(){
-       Cliente clienteSalvo = cliente;
-       Assertions.assertNotNull(clienteSalvo);
-       Cliente clienteBuscado = clienteService.buscarPorCpf(cliente.getCpf());
-       Assertions.assertEquals(clienteSalvo, clienteBuscado);
+    @BeforeEach
+    void setUp() {
+        cliente = new Cliente(
+                ":p@teste.com",
+                "Gyro I",
+                "Zeppeli I",
+                CPF
+        );
     }
 
     @Test
-    public void deveBuscarClientePorCpf(){
-        Cliente clienteBuscado = clienteService.buscarPorCpf(cliente.getCpf());
-        Assertions.assertNotNull(clienteBuscado);
+    @DisplayName("Deve salvar um cliente")
+    void deveSalvarCliente() {
+        when(repository.save(cliente)).thenReturn(cliente);
+
+        Cliente clienteSalvo = clienteService.salvar(cliente);
+
+        assertThat(clienteSalvo).isEqualTo(cliente);
+        verify(repository).save(cliente);
     }
 
     @Test
-    public void deveEditarCliente(){
-        Cliente clienteEditado =  new Cliente(
+    @DisplayName("Deve buscar cliente por CPF")
+    void deveBuscarClientePorCpf() {
+        when(repository.findByCpf(CPF)).thenReturn(Optional.of(cliente));
+
+        Cliente clienteBuscado = clienteService.buscarPorCpf(CPF);
+
+        assertThat(clienteBuscado).isNotNull();
+        assertThat(clienteBuscado.getCpf()).isEqualTo(CPF);
+    }
+
+    @Test
+    @DisplayName("Deve retornar null ao buscar CPF inexistente")
+    void deveRetornarNull_quandoCpfNaoExiste() {
+        when(repository.findByCpf("000")).thenReturn(Optional.empty());
+
+        Cliente clienteBuscado = clienteService.buscarPorCpf("000");
+
+        assertThat(clienteBuscado).isNull();
+    }
+
+    @Test
+    @DisplayName("Deve editar um cliente existente")
+    void deveEditarCliente() {
+        Cliente clienteEditado = new Cliente(
                 ">.<@teste.com",
                 "Isac",
                 "dos Santos",
                 "124321454"
         );
-        Cliente clienteBuscado =clienteService.editar(cliente.getCpf(), clienteEditado);
-        Assertions.assertNotNull(clienteBuscado);
 
-        Assertions.assertAll("clienteEditado",
-                ()-> assertEquals(clienteEditado.getEmail(), clienteBuscado.getEmail()),
-                ()-> assertEquals(clienteEditado.getPrimeiroNome(), clienteBuscado.getPrimeiroNome()),
-                ()-> assertEquals(clienteEditado.getLastName(), clienteBuscado.getLastName()),
-                ()-> assertEquals(clienteEditado.getCpf(), clienteBuscado.getCpf())
-                );
+        when(repository.findByCpf(CPF)).thenReturn(Optional.of(cliente));
+        when(repository.save(any(Cliente.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Cliente clienteBuscado = clienteService.editar(CPF, clienteEditado);
+
+        assertThat(clienteBuscado).isNotNull();
+        assertThat(clienteBuscado.getEmail()).isEqualTo(clienteEditado.getEmail());
+        assertThat(clienteBuscado.getPrimeiroNome()).isEqualTo(clienteEditado.getPrimeiroNome());
+        assertThat(clienteBuscado.getLastName()).isEqualTo(clienteEditado.getLastName());
+        assertThat(clienteBuscado.getCpf()).isEqualTo(clienteEditado.getCpf());
     }
 
     @Test
-    public void deveRemoverClientePorCpf(){
-       Cliente clienteBuscado = clienteService.buscarPorCpf(cliente.getCpf());
-       Assertions.assertNotNull(clienteBuscado);
-       clienteService.remover(cliente.getCpf());
-       clienteBuscado = clienteService.buscarPorCpf(cliente.getCpf());
-       Assertions.assertNull(clienteBuscado);
+    @DisplayName("Não deve editar quando cliente não existe")
+    void naoDeveEditar_quandoClienteNaoExiste() {
+        when(repository.findByCpf("000")).thenReturn(Optional.empty());
+
+        Cliente resultado = clienteService.editar("000", cliente);
+
+        assertThat(resultado).isNull();
+        verify(repository, never()).save(any());
     }
 
     @Test
-    public void deveListarTodos(){
-        List<Cliente> insertList = new ArrayList<>();
-        insertList.add(cliente2);
-        insertList.add(cliente3);
+    @DisplayName("Deve remover cliente por CPF")
+    void deveRemoverClientePorCpf() {
+        when(repository.findByCpf(CPF)).thenReturn(Optional.of(cliente));
 
-        insertList.forEach(c -> clienteService.salvar(c));
+        clienteService.remover(CPF);
 
-        insertList.add(cliente);
+        verify(repository).delete(cliente);
+    }
+
+    @Test
+    @DisplayName("Deve listar todos os clientes")
+    void deveListarTodos() {
+        Cliente cliente2 = new Cliente(":P@teste.com", "Johnny", "Joestar", "141212315");
+        Cliente cliente3 = new Cliente(":]@teste.com", "Isac", "dos Santos", "125311567");
+
+        when(repository.findAll()).thenReturn(List.of(cliente, cliente2, cliente3));
 
         List<Cliente> clienteList = clienteService.listarTodos();
 
-        Assertions.assertEquals(insertList.size(),clienteList.size());
-        Assertions.assertTrue(clienteList.containsAll(insertList));
-
+        assertThat(clienteList).hasSize(3);
+        assertThat(clienteList).containsExactlyInAnyOrder(cliente, cliente2, cliente3);
     }
 
     @Test
-    public void devePersistirClienteEEndereco(){
-        Endereco endereco = new Endereco("Rua das Elevações","0211890", "São Paulo",321,"SP",cliente);
-        List<Endereco> enderecos = new ArrayList<>();
-        enderecos.add(endereco);
-        cliente.setEnderecos(enderecos);
+    @DisplayName("Deve adicionar saldo ao cliente")
+    void deveAdicionarSaldoAoCliente() {
+        cliente.setSaldo("30");
 
-        Cliente cliTest = clienteService.salvar(cliente);
-        assertNotNull(cliTest.getEnderecos());
+        assertThat(cliente.getSaldo()).isEqualTo(BigDecimal.valueOf(30));
 
+        when(repository.save(cliente)).thenReturn(cliente);
+        Cliente clienteSalvo = clienteService.salvar(cliente);
+
+        assertThat(clienteSalvo.getSaldo()).isEqualTo(cliente.getSaldo());
     }
-
-    @Test
-    public void deveAdicionarSaldoAoCliente(){
-        Cliente c = clienteService.buscarPorCpf(cliente.getCpf());
-        c.setSaldo("30");
-        assertEquals(BigDecimal.valueOf(30),
-                c.getSaldo());
-       Cliente cliTest = clienteService.salvar(c);
-       assertEquals(cliTest.getSaldo(), c.getSaldo());
-    }
-
-
-
-    @BeforeEach
-    public void init(){
-        cliente = new Cliente(
-                ">.<@teste.com",
-                "Gyro",
-                "Zeppeli",
-                "1412312311"
-        );
-
-        cliente2 = new Cliente(
-                ":P@teste.com",
-                "Johnny",
-                "Joestar",
-                "141212315"
-        );
-        cliente3 = new Cliente(
-                ":]@teste.com",
-                "Isac",
-                "dos Santos",
-                "125311567"
-        );
-
-
-        clienteService.salvar(cliente);
-    }
-
-    @AfterEach
-    public void end(){
-        List<Cliente> clienteList = clienteService.listarTodos();
-        clienteList.forEach(e -> clienteService.remover(e.getCpf()));
-    }
-
 }

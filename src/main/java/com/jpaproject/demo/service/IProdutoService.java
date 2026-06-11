@@ -15,4 +15,6 @@ public interface IProdutoService {
     Produto editar(Long cod, Produto produtoEditado);
 
     void excluir(Long cod);
+
+    void addQuantidadeMaterial(Integer quantidade, Long cod);
 }

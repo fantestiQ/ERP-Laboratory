@@ -30,6 +30,10 @@ public class Material {
       this.quantidade = 0;
    }
 
+   public void incrementaQuantidade(Integer quantidade){
+      this.quantidade = quantidade;
+   }
+
    public static  Material fromProduto(Produto produto){
       return new Material(produto);
    }

@@ -3,6 +3,7 @@ package com.jpaproject.demo.service;
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Endereco;
 import com.jpaproject.demo.repository.EnderecoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +12,14 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class EnderecoService implements IEnderecoService{
 
-    @Autowired
-    EnderecoRepository repository;
 
-    @Autowired
-    IClienteService clienteService;
+    public final EnderecoRepository repository;
+
+
+    public final IClienteService clienteService;
 
     @Override
     public Endereco editarEndereco(String nomeEndereco, String cpfCliente, Endereco enderecoEditado) {
