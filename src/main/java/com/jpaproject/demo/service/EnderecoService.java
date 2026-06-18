@@ -2,6 +2,7 @@ package com.jpaproject.demo.service;
 
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Endereco;
+import com.jpaproject.demo.domain.dtos.endereco.EnderecoDTO;
 import com.jpaproject.demo.repository.EnderecoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,15 @@ public class EnderecoService implements IEnderecoService{
 
 
     public final IClienteService clienteService;
+
+    @Override
+    public Endereco adicionaEnderecoCliente(String cpfCliente, EnderecoDTO endereco) {
+        Cliente cliente = clienteService.buscarPorCpf(cpfCliente);
+        Endereco end = new Endereco(endereco, cliente);
+        cliente.getEnderecos().add(end);
+        clienteService.salvar(cliente);
+        return buscarEndereco(end.getEndereco(),cpfCliente);
+    }
 
     @Override
     public Endereco editarEndereco(String nomeEndereco, String cpfCliente, Endereco enderecoEditado) {

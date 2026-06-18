@@ -1,6 +1,8 @@
 package com.jpaproject.demo.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jpaproject.demo.domain.dtos.endereco.EnderecoDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,6 +30,7 @@ public class Endereco {
     private String uf;
 
     @ManyToOne
+    @JsonIgnore
     private Cliente cliente;
 
     public Endereco(String endereco, String cep, String cidade, Integer numero, String uf, Cliente cliente) {
@@ -36,6 +39,14 @@ public class Endereco {
         this.cidade = cidade;
         this.numero = numero;
         this.uf = uf;
+        this.cliente = cliente;
+    }
+    public Endereco(EnderecoDTO dados, Cliente cliente) {
+        this.endereco = dados.endereco();
+        this.cep = dados.cep();
+        this.cidade = dados.cidade();
+        this.numero = dados.numero();
+        this.uf = dados.uf();
         this.cliente = cliente;
     }
 
