@@ -1,5 +1,6 @@
 package com.jpaproject.demo.domain;
 
+import com.jpaproject.demo.domain.dtos.cliente.ClienteDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,6 +53,10 @@ public class Cliente {
         this.cpf = cpf;
         this.lastName = lastName;
         this.saldo = BigDecimal.ZERO;
+    }
+
+    public static Cliente criaCliente(ClienteDTO dados){
+        return new Cliente(dados.email(), dados.nome(), dados.lastName(), dados.cpf());
     }
 
     public void editaCliente(Cliente clienteEditado){

@@ -1,9 +1,12 @@
 package com.jpaproject.demo.service;
 
 import com.jpaproject.demo.domain.Cliente;
+import com.jpaproject.demo.domain.dtos.PageResponse;
+import com.jpaproject.demo.domain.dtos.cliente.ClienteResponseDTO;
 import com.jpaproject.demo.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,7 +50,13 @@ public class ClienteService implements IClienteService{
 
     @Override
     public List<Cliente> listarTodos() {
-        return repository.findAll();
+        return List.of();
+    }
+
+    @Override
+    public PageResponse<ClienteResponseDTO> listarTodos(Pageable pageable) {
+        Page<ClienteResponseDTO> page = repository.findAll(pageable).map(ClienteResponseDTO::fromEntity);
+        return  PageResponse.from(page);
     }
 
 }
