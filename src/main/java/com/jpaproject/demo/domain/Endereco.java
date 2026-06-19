@@ -50,12 +50,12 @@ public class Endereco {
         this.cliente = cliente;
     }
 
-    public void editaEndereco(Endereco enderecoEditado){
-        this.setEndereco(enderecoEditado.getEndereco());
-        this.setUf(enderecoEditado.getUf());
-        this.setCep(enderecoEditado.getCep());
-        this.setCidade(enderecoEditado.getCidade());
-        this.setNumero(enderecoEditado.getNumero());
+    public void editaEndereco(EnderecoDTO enderecoEditado){
+        this.setEndereco(enderecoEditado.endereco());
+        this.setUf(enderecoEditado.uf());
+        this.setCep(enderecoEditado.cep());
+        this.setCidade(enderecoEditado.cidade());
+        this.setNumero(enderecoEditado.numero());
     }
 
     @Override

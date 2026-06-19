@@ -2,10 +2,14 @@ package com.jpaproject.demo.service;
 
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Endereco;
+import com.jpaproject.demo.domain.dtos.PageResponse;
 import com.jpaproject.demo.domain.dtos.endereco.EnderecoDTO;
+import com.jpaproject.demo.domain.dtos.endereco.EnderecoResponseDTO;
 import com.jpaproject.demo.repository.EnderecoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +36,7 @@ public class EnderecoService implements IEnderecoService{
     }
 
     @Override
-    public Endereco editarEndereco(String nomeEndereco, String cpfCliente, Endereco enderecoEditado) {
+    public Endereco editarEndereco(String nomeEndereco, String cpfCliente, EnderecoDTO enderecoEditado) {
         Endereco endereco = buscarEndereco(nomeEndereco, cpfCliente);
         endereco.editaEndereco(enderecoEditado);
         return  repository.save(endereco);
@@ -72,7 +76,17 @@ public class EnderecoService implements IEnderecoService{
     public List<Endereco> listaTodosEnderecos(String cpfCliente) {
         Cliente cliente = clienteService.buscarPorCpf(cpfCliente);
         if (cliente != null){
-           return  repository.findByClienteId(cliente.getId());
+            return repository.findByClienteId(cliente.getId());
+        }
+        return null;
+    }
+
+    @Override
+    public PageResponse<EnderecoResponseDTO> listaTodosEnderecos(String cpfCliente, Pageable pageable) {
+        Cliente cliente = clienteService.buscarPorCpf(cpfCliente);
+        if (cliente != null){
+                Page<EnderecoResponseDTO> page = repository.findByClienteId(cliente.getId(), pageable).map(EnderecoResponseDTO::fromEntity);
+                return  PageResponse.from(page);
         }
         return null;
     }

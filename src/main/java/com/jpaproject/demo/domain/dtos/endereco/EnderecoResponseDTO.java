@@ -14,4 +14,8 @@ public record EnderecoResponseDTO(
     public EnderecoResponseDTO (Endereco endereco){
         this(endereco.getId(), endereco.getEndereco(), endereco.getCep(), endereco.getCidade(), endereco.getNumero(), endereco.getUf());
     }
+
+    public static EnderecoResponseDTO fromEntity(Endereco endereco){
+       return new EnderecoResponseDTO(endereco);
+    }
 }

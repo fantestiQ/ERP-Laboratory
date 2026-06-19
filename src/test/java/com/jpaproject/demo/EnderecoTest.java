@@ -2,6 +2,7 @@ package com.jpaproject.demo;
 
 import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Endereco;
+import com.jpaproject.demo.domain.dtos.endereco.EnderecoDTO;
 import com.jpaproject.demo.repository.EnderecoRepository;
 import com.jpaproject.demo.service.EnderecoService;
 import com.jpaproject.demo.service.IClienteService;
@@ -101,7 +102,7 @@ class EnderecoTest {
         when(repository.findByClienteId(cliente.getId())).thenReturn(cliente.getEnderecos());
         when(repository.save(any(Endereco.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Endereco enderecoEditado = new Endereco("Avenida Bringel", "0211890", "Meu coração", 321, "SP", cliente);
+        EnderecoDTO enderecoEditado = new EnderecoDTO("Avenida Bringel", "0211890", "Meu coração", 321, "SP");
 
         Endereco resultado = enderecoService.editarEndereco("Rua das Elevações", CPF, enderecoEditado);
 

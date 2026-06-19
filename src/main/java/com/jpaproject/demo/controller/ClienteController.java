@@ -4,8 +4,10 @@ import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.dtos.PageResponse;
 import com.jpaproject.demo.domain.dtos.cliente.ClienteDTO;
 import com.jpaproject.demo.domain.dtos.cliente.ClienteResponseDTO;
+import com.jpaproject.demo.domain.dtos.endereco.EditaEnderecoDTO;
 import com.jpaproject.demo.domain.dtos.endereco.EnderecoDTO;
 import com.jpaproject.demo.domain.dtos.endereco.EnderecoResponseDTO;
+import com.jpaproject.demo.domain.dtos.endereco.NomeEnderecoDTO;
 import com.jpaproject.demo.service.IClienteService;
 import com.jpaproject.demo.service.IEnderecoService;
 import jakarta.validation.Valid;
@@ -85,6 +87,36 @@ public class ClienteController {
                 .buildAndExpand(response.id())
                 .toUri();
         return  ResponseEntity.created(uri).body(response);
+    }
+
+    @PutMapping("/{cpf}/enderecos")
+    public ResponseEntity<EnderecoResponseDTO> editaEnderecoCliente(@PathVariable String cpf,
+                                                 @RequestBody @Valid EditaEnderecoDTO dados){
+        EnderecoResponseDTO response = new EnderecoResponseDTO(enderecoService.editarEndereco(dados.enderecoEditar(),cpf,dados.dadosEndereco()));
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{cpf}/enderecos")
+    public ResponseEntity deletaEnderecoCliente(@PathVariable String cpf,
+                                                @RequestBody @Valid NomeEnderecoDTO dado){
+        enderecoService.removerEndereco(dado.endereco(), cpf);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{cpf}/endereco")
+    public ResponseEntity<EnderecoResponseDTO> buscaEnderecoCliente(@PathVariable String cpf,
+                                                                    @RequestParam String  endereco){
+        EnderecoResponseDTO response = new EnderecoResponseDTO(enderecoService.buscarEndereco(endereco,cpf));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{cpf}/enderecos")
+    public ResponseEntity<PageResponse<EnderecoResponseDTO>> buscaEnderecosCliente(@PathVariable String cpf,
+                                                                                   @PageableDefault(
+                                                                                           size = 20,
+                                                                                           sort = "endereco",
+                                                                                           direction =  Sort.Direction.ASC)
+                                                                                   Pageable pageable){
+        return ResponseEntity.ok(enderecoService.listaTodosEnderecos(cpf,pageable));
     }
 
 }
