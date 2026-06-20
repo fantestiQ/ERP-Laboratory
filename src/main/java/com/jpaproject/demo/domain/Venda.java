@@ -64,6 +64,7 @@ public class Venda {
         if (produto.getMaterial().getQuantidade()>0){
         this.produtos.add(produto);
         this.valorTotal = valorTotal.add(produto.getValor());
+        produto.getMaterial().setQuantidade(produto.getMaterial().getQuantidade() - 1);
         }else throw new IllegalArgumentException("Produto está com estoque zerado!");
     }
     public void finalizarVenda(){

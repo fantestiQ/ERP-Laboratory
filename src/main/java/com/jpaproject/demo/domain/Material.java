@@ -1,5 +1,6 @@
 package com.jpaproject.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class Material {
    @SequenceGenerator(name = "material_seq", sequenceName = "material_sequence")
    private Long id;
 
+   @JsonIgnore
    @OneToOne(mappedBy = "material")
    private Produto produto;
 
@@ -31,7 +33,7 @@ public class Material {
    }
 
    public void incrementaQuantidade(Integer quantidade){
-      this.quantidade = quantidade;
+      this.quantidade += quantidade;
    }
 
    public static  Material fromProduto(Produto produto){

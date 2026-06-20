@@ -18,7 +18,9 @@ public class VendaService implements IVendaService{
 
     public final VendaRepository repository;
 
-    public final ClienteService clienteService;
+    public final IClienteService clienteService;
+
+    public final IProdutoService produtoService;
 
     @Override
     public void iniciaVenda(String cpfCliente) {
@@ -41,6 +43,7 @@ public class VendaService implements IVendaService{
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
         Venda venda = repository.buscaVendaIniciada(clienteVenda);
         venda.adicionarAoCarrinho(produto);
+        produtoService.cadastrar(produto);
         repository.save(venda);
 
     }

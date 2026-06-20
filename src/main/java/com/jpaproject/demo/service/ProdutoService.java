@@ -1,9 +1,13 @@
 package com.jpaproject.demo.service;
 
 import com.jpaproject.demo.domain.Produto;
+import com.jpaproject.demo.domain.dtos.PageResponse;
+import com.jpaproject.demo.domain.dtos.produto.ProdutoDTOResponse;
 import com.jpaproject.demo.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -29,6 +33,12 @@ public class ProdutoService implements IProdutoService{
     @Override
     public List<Produto> buscarTodos() {
         return repository.findAll();
+    }
+
+    @Override
+    public PageResponse<ProdutoDTOResponse> buscarTodos(Pageable pageable) {
+       Page<ProdutoDTOResponse> page = repository.findAll(pageable).map(ProdutoDTOResponse::fromEntity);
+       return PageResponse.from(page);
     }
 
     @Override
