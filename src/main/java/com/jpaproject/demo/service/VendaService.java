@@ -4,9 +4,13 @@ import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Produto;
 import com.jpaproject.demo.domain.StatusVenda;
 import com.jpaproject.demo.domain.Venda;
+import com.jpaproject.demo.domain.dtos.PageResponse;
+import com.jpaproject.demo.domain.dtos.vendas.VendaResponseDTO;
 import com.jpaproject.demo.repository.VendaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +52,15 @@ public class VendaService implements IVendaService{
     }
 
     @Override
+    public Venda removeCarrinhoVenda(String cpfCliente, Produto produto) {
+        Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
+        Venda venda = repository.buscaVendaIniciada(clienteVenda);
+        venda.removerDoCarrinho(produto);
+        produtoService.cadastrar(produto);
+        return repository.save(venda);
+    }
+
+    @Override
     public Venda cancelaVenda(String cpfCliente) {
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
         Venda venda = repository.buscaVendaIniciada(clienteVenda);
@@ -75,17 +88,26 @@ public class VendaService implements IVendaService{
     }
 
     @Override
-    public List<Venda> buscaVendasPendentes() {
-        return repository.buscaVendasPendentes();
+    public PageResponse<VendaResponseDTO> buscaVendasPorCliente(String cpfCliente, Pageable pageable) {
+        Page<VendaResponseDTO> page = repository.findAllByCliente(clienteService.buscarPorCpf(cpfCliente), pageable).map(VendaResponseDTO::fromEntity);
+        return PageResponse.from(page);
     }
 
     @Override
-    public List<Venda> buscaVendasCanceladas() {
-        return repository.buscaVendasCanceladas();
+    public PageResponse<VendaResponseDTO> buscaVendasPendentes(Pageable pageable) {
+        Page<VendaResponseDTO> page = repository.buscaVendasPendentes(pageable).map(VendaResponseDTO::fromEntity);
+        return PageResponse.from(page);
     }
 
     @Override
-    public List<Venda> buscaVendasFinalizadas() {
-        return repository.buscaVendasFinalizadas();
+    public PageResponse<VendaResponseDTO> buscaVendasCanceladas(Pageable pageable) {
+        Page<VendaResponseDTO> page = repository.buscaVendasCanceladas(pageable).map(VendaResponseDTO::fromEntity);
+        return PageResponse.from(page);
+    }
+
+    @Override
+    public PageResponse<VendaResponseDTO> buscaVendasFinalizadas(Pageable pageable) {
+        Page<VendaResponseDTO> page =  repository.buscaVendasFinalizadas(pageable).map(VendaResponseDTO::fromEntity);
+        return PageResponse.from(page);
     }
 }

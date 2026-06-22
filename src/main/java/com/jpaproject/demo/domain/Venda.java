@@ -67,6 +67,15 @@ public class Venda {
         produto.getMaterial().setQuantidade(produto.getMaterial().getQuantidade() - 1);
         }else throw new IllegalArgumentException("Produto está com estoque zerado!");
     }
+
+    public void removerDoCarrinho(Produto produto){
+        if (produtos.contains(produto)){
+            this.produtos.remove(produto);
+            this.valorTotal = valorTotal.subtract(produto.getValor());
+            produto.getMaterial().setQuantidade(produto.getMaterial().getQuantidade() + 1);
+        }else throw new IllegalArgumentException("Não há esse produto no carrinho!");
+    }
+
     public void finalizarVenda(){
         this.statusVenda = StatusVenda.FINALIZADA;
     }

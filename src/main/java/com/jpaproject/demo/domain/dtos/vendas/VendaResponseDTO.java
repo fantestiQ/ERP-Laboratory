@@ -27,6 +27,10 @@ public record VendaResponseDTO(
                 venda.getStatusVenda(),venda.getDataVenda(),venda.getCodVenda());
     }
 
+    public static VendaResponseDTO fromEntity(Venda venda){
+        return new VendaResponseDTO(venda);
+    }
+
     public static List<ItemVendaResponseDTO> listaProdutos(Venda venda){
         return venda.getProdutos().stream().map(ItemVendaResponseDTO::new).toList();
     }
