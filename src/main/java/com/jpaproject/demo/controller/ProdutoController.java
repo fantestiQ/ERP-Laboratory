@@ -20,6 +20,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/produtos")
+@CrossOrigin(origins = "*")
 public class ProdutoController {
 
     public final IProdutoService service;

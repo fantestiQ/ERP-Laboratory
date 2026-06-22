@@ -16,7 +16,7 @@ public interface VendaRepository extends JpaRepository<Venda,Long> {
 
     Page<Venda> findAllByCliente(Cliente cliente, Pageable pageable);
 
-    @Query("SELECT v FROM Venda v WHERE v.statusVenda = StatusVenda.INICIADA")
+    @Query("SELECT v FROM Venda v WHERE v.cliente = :cliente AND v.statusVenda = StatusVenda.INICIADA")
     Venda buscaVendaIniciada(Cliente cliente);
 
     @Query("SELECT v FROM Venda v where v.statusVenda = StatusVenda.INICIADA")

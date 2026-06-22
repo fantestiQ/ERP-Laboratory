@@ -25,6 +25,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/clientes")
+@CrossOrigin(origins = "*")
 public class ClienteController {
 
     public final IClienteService clienteService;
