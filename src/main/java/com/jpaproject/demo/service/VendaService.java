@@ -23,7 +23,7 @@ public class VendaService implements IVendaService{
     public final IProdutoService produtoService;
 
     @Override
-    public void iniciaVenda(String cpfCliente) {
+    public Venda iniciaVenda(String cpfCliente) {
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
 
         boolean temVendavendente  = repository.findAllByCliente(clienteVenda)
@@ -34,34 +34,33 @@ public class VendaService implements IVendaService{
                 throw new IllegalArgumentException("Já há uma venda pendete! Finalize para iniciar uma nova.");
             }
 
-        repository.save(Venda.criaVenda(clienteVenda));
+        return repository.save(Venda.criaVenda(clienteVenda));
 
     }
 
     @Override
-    public void addCarrinhoVenda(String cpfCliente, Produto produto) {
+    public Venda addCarrinhoVenda(String cpfCliente, Produto produto) {
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
         Venda venda = repository.buscaVendaIniciada(clienteVenda);
         venda.adicionarAoCarrinho(produto);
         produtoService.cadastrar(produto);
-        repository.save(venda);
-
+        return repository.save(venda);
     }
 
     @Override
-    public void cancelaVenda(String cpfCliente) {
+    public Venda cancelaVenda(String cpfCliente) {
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
         Venda venda = repository.buscaVendaIniciada(clienteVenda);
         venda.cancelarVenda();
-        repository.save(venda);
+        return repository.save(venda);
     }
 
     @Override
-    public void finalizaVenda(String cpfCliente) {
+    public Venda finalizaVenda(String cpfCliente) {
         Cliente clienteVenda = clienteService.buscarPorCpf(cpfCliente);
         Venda venda = repository.buscaVendaIniciada(clienteVenda);
         venda.finalizarVenda();
-        repository.save(venda);
+        return repository.save(venda);
     }
 
     @Override

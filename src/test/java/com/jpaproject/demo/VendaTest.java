@@ -6,6 +6,7 @@ import com.jpaproject.demo.domain.StatusVenda;
 import com.jpaproject.demo.domain.Venda;
 import com.jpaproject.demo.repository.VendaRepository;
 import com.jpaproject.demo.service.ClienteService;
+import com.jpaproject.demo.service.IProdutoService;
 import com.jpaproject.demo.service.VendaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,9 @@ class VendaTest {
 
     @Mock
     private ClienteService clienteService;
+
+    @Mock
+    private IProdutoService produtoService;
 
     @InjectMocks
     private VendaService vendaService;
@@ -85,8 +89,8 @@ class VendaTest {
     // ----------------------------------------------------------------
 
     @Test
-    @DisplayName("Deve adicionar produto ao carrinho da venda iniciada")
-    void deveAdicionarProdutoAoCarrinho() {
+    @DisplayName("Deve adicionar produto ao carrinho e decrementar o estoque quando há quantidade disponível")
+    void deveAdicionarProdutoAoCarrinho_eDecrementarEstoque() {
         Venda vendaIniciada = Venda.criaVenda(clienteMock);
 
         Produto produto = mock(Produto.class);
@@ -101,7 +105,34 @@ class VendaTest {
         vendaService.addCarrinhoVenda(CPF, produto);
 
         assertThat(vendaIniciada.getProdutos()).contains(produto);
+        assertThat(vendaIniciada.getValorTotal()).isEqualTo(java.math.BigDecimal.TEN);
+        verify(material).setQuantidade(9);
+        verify(produtoService).cadastrar(produto);
         verify(repository).save(vendaIniciada);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao adicionar produto sem estoque disponível")
+    void deveLancarExcecao_quandoProdutoSemEstoque() {
+        Venda vendaIniciada = Venda.criaVenda(clienteMock);
+
+        Produto produto = mock(Produto.class);
+        var material = mock(com.jpaproject.demo.domain.Material.class);
+        when(produto.getMaterial()).thenReturn(material);
+        when(material.getQuantidade()).thenReturn(0);
+
+        when(clienteService.buscarPorCpf(CPF)).thenReturn(clienteMock);
+        when(repository.buscaVendaIniciada(clienteMock)).thenReturn(vendaIniciada);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> vendaService.addCarrinhoVenda(CPF, produto)
+        );
+
+        assertThat(ex.getMessage()).contains("Produto está com estoque zerado");
+        assertThat(vendaIniciada.getProdutos()).doesNotContain(produto);
+        verify(material, never()).setQuantidade(anyInt());
+        verify(repository, never()).save(any());
     }
 
     // ----------------------------------------------------------------

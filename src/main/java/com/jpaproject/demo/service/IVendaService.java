@@ -1,6 +1,5 @@
 package com.jpaproject.demo.service;
 
-import com.jpaproject.demo.domain.Cliente;
 import com.jpaproject.demo.domain.Produto;
 import com.jpaproject.demo.domain.Venda;
 
@@ -8,13 +7,13 @@ import java.util.List;
 
 public interface IVendaService {
 
-    void iniciaVenda(String cpfCliente);
+    Venda iniciaVenda(String cpfCliente);
 
-    void addCarrinhoVenda(String cpfCliente, Produto produto);
+    Venda addCarrinhoVenda(String cpfCliente, Produto produto);
 
-    void cancelaVenda(String cpfCliente);
+    Venda cancelaVenda(String cpfCliente);
 
-    void finalizaVenda(String cpfCliente);
+    Venda finalizaVenda(String cpfCliente);
 
     Venda buscaVendaPendente(String cpfCliente);
 
