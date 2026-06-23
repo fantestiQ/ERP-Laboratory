@@ -176,11 +176,6 @@ Os testes unitários utilizam **Mockito** para isolar as camadas de serviço sem
 
 ---
 
-## 🔗 Links
-- [Repositório Frontend](https://github.com/seu-usuario/erp-lab-frontend)
-
----
-
 ## 👤 Autor
 
 **Isac**  
